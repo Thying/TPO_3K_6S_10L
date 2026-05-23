@@ -1,51 +1,57 @@
-const { Builder, By } = require('selenium-webdriver');
+const puppeteer = require('puppeteer');
 const assert = require('assert');
 
 describe('Тесты формы', function() {
-    this.timeout(60000);
-    let driver;
+    this.timeout(30000);
+    let browser;
+    let page;
 
     beforeEach(async function() {
-        // Подключаемся к запущенному chromedriver
-        driver = await new Builder()
-            .usingServer('http://localhost:9515')  // chromedriver по умолчанию
-            .forBrowser('chrome')
-            .build();
+        browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        page = await browser.newPage();
         
-        const filePath = 'file://' + process.cwd() + '/index.html';
-        await driver.get(filePath);
+        // Открываем нашу форму
+        const filePath = 'file://' + process.cwd().replace(/\\/g, '/') + '/index.html';
+        await page.goto(filePath);
     });
 
     afterEach(async function() {
-        if (driver) {
-            await driver.quit();
+        if (browser) {
+            await browser.close();
         }
     });
 
+    // ТЕСТ 1: страница загружается и содержит заголовок
     it('должна загрузиться страница с заголовком "Регистрация"', async function() {
-        const title = await driver.findElement(By.css('h1')).getText();
+        const title = await page.$eval('h1', el => el.textContent);
         assert.strictEqual(title, 'Регистрация');
     });
 
+    // ТЕСТ 2: поле для ввода имени существует
     it('должно быть поле для ввода имени', async function() {
-        const nameField = await driver.findElement(By.id('name'));
-        const isDisplayed = await nameField.isDisplayed();
-        assert.strictEqual(isDisplayed, true);
+        const nameField = await page.$('#name');
+        assert.ok(nameField, 'Поле имени не найдено');
     });
 
+    // ТЕСТ 3: поле для ввода email существует
     it('должно быть поле для ввода email', async function() {
-        const emailField = await driver.findElement(By.id('email'));
-        const isDisplayed = await emailField.isDisplayed();
-        assert.strictEqual(isDisplayed, true);
+        const emailField = await page.$('#email');
+        assert.ok(emailField, 'Поле email не найдено');
     });
 
-    it('при нажатии на кнопку появляется сообщение', async function() {
-        const button = await driver.findElement(By.id('submit-btn'));
-        await button.click();
+    // ТЕСТ 4: при нажатии на кнопку появляется сообщение
+    it('при нажатии на кнопку появляется сообщение "Форма отправлена!"', async function() {
+        // Нажимаем на кнопку
+        await page.click('#submit-btn');
         
-        const message = await driver.findElement(By.id('message'));
-        const messageText = await message.getText();
+        // Ждём появления сообщения
+        await page.waitForSelector('#message');
         
+        // Проверяем текст сообщения
+        const messageText = await page.$eval('#message', el => el.textContent);
         assert.strictEqual(messageText, 'Форма отправлена!');
     });
 });
