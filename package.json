@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/Thying/TPO_3K_6S_10L#readme",
   "devDependencies": {
-    "chromedriver": "^149.0.0",
     "edgedriver": "^6.3.0",
     "mocha": "^11.7.6",
     "selenium-webdriver": "^4.44.0"

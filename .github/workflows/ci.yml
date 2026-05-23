@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Проверить код из репозитория
+      - name: Проверить код
         uses: actions/checkout@v4
       
       - name: Установить Node.js
@@ -19,22 +19,15 @@ jobs:
         with:
           node-version: '22'
       
-      - name: Установить Chrome браузер
-        run: |
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+      - name: Установить Chrome и ChromeDriver
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: '119.0.6045.105'  # Стабильная версия
       
-      - name: Установить ChromeDriver (той же версии, что и Chrome)
+      - name: Запустить ChromeDriver в фоне
         run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
-          CHROME_MAJOR_VERSION=${CHROME_VERSION%%.*}
-          wget -q "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
-          unzip chromedriver-linux64.zip
-          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-          sudo chmod +x /usr/local/bin/chromedriver
           chromedriver --version
+          chromedriver --url-base=/wd/hub &
       
       - name: Установить зависимости
         run: npm ci

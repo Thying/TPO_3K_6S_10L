@@ -6,25 +6,12 @@ describe('Тесты формы', function() {
     let driver;
 
     beforeEach(async function() {
-        const chrome = require('selenium-webdriver/chrome');
-        const options = new chrome.Options();
-        
-        // Headless режим для CI
-        options.addArguments('--headless');
-        options.addArguments('--no-sandbox');
-        options.addArguments('--disable-dev-shm-usage');
-        
-        // Указываем путь к chromedriver (для Linux)
-        if (process.env.CI) {
-            options.setChromeBinaryPath('/usr/bin/google-chrome');
-        }
-        
+        // Подключаемся к запущенному chromedriver
         driver = await new Builder()
+            .usingServer('http://localhost:9515')  // chromedriver по умолчанию
             .forBrowser('chrome')
-            .setChromeOptions(options)
             .build();
         
-        // Путь к файлу
         const filePath = 'file://' + process.cwd() + '/index.html';
         await driver.get(filePath);
     });
