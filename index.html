@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тестовая форма</title>
+</head>
+<body>
+    <h1>Регистрация</h1>
+    <form id="test-form">
+        <label for="name">Имя:</label>
+        <input type="text" id="name" name="name">
+        <br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+        <br><br>
+        <button type="submit" id="submit-btn">Отправить</button>
+    </form>
+    <p id="message"></p>
+
+    <script>
+        document.getElementById('test-form').onsubmit = function(e) {
+            e.preventDefault();
+            document.getElementById('message').innerText = 'Форма отправлена!';
+        };
+    </script>
+</body>
+</html>
