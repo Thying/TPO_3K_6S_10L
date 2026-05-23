@@ -1,0 +1,31 @@
+name: CI - Запуск тестов
+
+on:
+  push:
+    branches: [ main, dev, fix ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Проверить код из репозитория
+        uses: actions/checkout@v4
+      
+      - name: Установить Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Установить зависимости
+        run: npm ci
+      
+      - name: Установить Chrome для тестов
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+      
+      - name: Запустить тесты
+        run: npm test

@@ -1,0 +1,27 @@
+{
+  "name": "tpo_3k_6s_10l",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thying/TPO_3K_6S_10L.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Thying/TPO_3K_6S_10L/issues"
+  },
+  "homepage": "https://github.com/Thying/TPO_3K_6S_10L#readme",
+  "devDependencies": {
+    "chromedriver": "^149.0.0",
+    "edgedriver": "^6.3.0",
+    "mocha": "^11.7.6",
+    "selenium-webdriver": "^4.44.0"
+  }
+}
