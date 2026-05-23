@@ -22,10 +22,12 @@ jobs:
       - name: Установить зависимости
         run: npm ci
       
-      - name: Установить Chrome для тестов
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+      - name: Запустить тесты (с автоматической установкой Chrome)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
       
       - name: Запустить тесты
         run: npm test
+        env:
+          CI: true
