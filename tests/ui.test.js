@@ -6,20 +6,27 @@ describe('Тесты формы', function() {
     let driver;
 
     beforeEach(async function() {
-        const chrome = require('selenium-webdriver/chrome');
-        const options = new chrome.Options();
+        // Определяем, используем ли удалённый Selenium (GitHub Actions)
+        const remoteUrl = process.env.SELENIUM_REMOTE_URL;
         
-        // Настройки для работы в CI (GitHub Actions)
-        options.addArguments('--headless');      // Без графического окна
-        options.addArguments('--no-sandbox');    // Нужно для Linux
-        options.addArguments('--disable-dev-shm-usage'); // Для памяти
+        if (remoteUrl) {
+            // На GitHub Actions: подключаемся к Selenium-серверу в контейнере
+            driver = await new Builder()
+                .usingServer(remoteUrl)
+                .forBrowser('chrome')
+                .build();
+        } else {
+            // Локально: используем обычный Chrome
+            const chrome = require('selenium-webdriver/chrome');
+            const options = new chrome.Options();
+            options.addArguments('--headless');
+            driver = await new Builder()
+                .forBrowser('chrome')
+                .setChromeOptions(options)
+                .build();
+        }
         
-        driver = await new Builder()
-            .forBrowser('chrome')
-            .setChromeOptions(options)
-            .build();
-        
-        // Правильный путь для Linux (GitHub Actions)
+        // Получаем путь к index.html
         const filePath = 'file://' + process.cwd() + '/index.html';
         await driver.get(filePath);
     });
