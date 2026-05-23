@@ -1,0 +1,33 @@
+name: CI - Запуск тестов
+
+on:
+  push:
+    branches: [ main, dev, fix ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Проверить код
+        uses: actions/checkout@v4
+      
+      - name: Установить Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Установить зависимости
+        run: npm ci
+      
+      - name: Установить системные зависимости для Puppeteer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm-dev libasound2t64
+      
+      - name: Запустить тесты
+        run: npm test
+        env:
+          CI: true
