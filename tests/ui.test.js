@@ -6,27 +6,25 @@ describe('Тесты формы', function() {
     let driver;
 
     beforeEach(async function() {
-        // Определяем, используем ли удалённый Selenium (GitHub Actions)
-        const remoteUrl = process.env.SELENIUM_REMOTE_URL;
+        const chrome = require('selenium-webdriver/chrome');
+        const options = new chrome.Options();
         
-        if (remoteUrl) {
-            // На GitHub Actions: подключаемся к Selenium-серверу в контейнере
-            driver = await new Builder()
-                .usingServer(remoteUrl)
-                .forBrowser('chrome')
-                .build();
-        } else {
-            // Локально: используем обычный Chrome
-            const chrome = require('selenium-webdriver/chrome');
-            const options = new chrome.Options();
-            options.addArguments('--headless');
-            driver = await new Builder()
-                .forBrowser('chrome')
-                .setChromeOptions(options)
-                .build();
+        // Headless режим для CI
+        options.addArguments('--headless');
+        options.addArguments('--no-sandbox');
+        options.addArguments('--disable-dev-shm-usage');
+        
+        // Указываем путь к chromedriver (для Linux)
+        if (process.env.CI) {
+            options.setChromeBinaryPath('/usr/bin/google-chrome');
         }
         
-        // Получаем путь к index.html
+        driver = await new Builder()
+            .forBrowser('chrome')
+            .setChromeOptions(options)
+            .build();
+        
+        // Путь к файлу
         const filePath = 'file://' + process.cwd() + '/index.html';
         await driver.get(filePath);
     });
@@ -54,7 +52,7 @@ describe('Тесты формы', function() {
         assert.strictEqual(isDisplayed, true);
     });
 
-    it('при нажатии на кнопку появляется сообщение "Форма отправлена!"', async function() {
+    it('при нажатии на кнопку появляется сообщение', async function() {
         const button = await driver.findElement(By.id('submit-btn'));
         await button.click();
         
